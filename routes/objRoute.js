@@ -19,7 +19,7 @@ var storage = multer.diskStorage({
  
 var upload = multer({ storage: storage }).single('photo');
 
-var commonItems=["key","bottle"];
+var commonItems=["key","bottle","telephone","phone","cellular phone","medicine","pill","drug","capsule","purse","bag","backpack","luggage"];
 
 function base64_encode(file) {
     // read binary data
@@ -27,7 +27,8 @@ function base64_encode(file) {
     // convert binary data to base64 encoded string
     return new Buffer(bitmap).toString('base64');
 }
-var temp;
+var detected_ob
+var confidence=0;
 function giveObj(encoded_img)
 
 {
@@ -37,7 +38,12 @@ function giveObj(encoded_img)
     // do something with response
     response.outputs[0].data.concepts.forEach(function(entity){
     	if(commonItems.indexOf(entity.name)>0){
-    		temp=entity.name;
+    		if(confidence<entity.value){
+    		detected_ob=entity.name;
+    		confidence=entity.value;
+    		//console.log("saagd");	
+    	}
+    		
     		
     	}
     })
@@ -66,27 +72,26 @@ router.post('/profile', function (req, res) {
  	//console.log("sdgf");
  	
     // Everything went fine.
-    res.json({
-    	success:true,
-    	message:"Done",
+    // res.json({
+    // 	success:true,
+    // 	message:"Done",
     	
-    });
-    setTimeout(function(){
-    console.log(temp);
-  },5000);
+    // });
+    
   })
+  setTimeout(function(){
+  	req.body["obj"]=detected_ob;
+    console.log(req.body);
+
+  },5000);
+  confidence=0;
+  detected_ob="";
 })
 
 
 
 
 
-router.post("/ob",function(req,res){
-
-	
-	setTimeout(function(){var ob=giveObj(req.body.encoded_img);console.log(ob)},5000);
-
-})
 
 
 module.exports=router;
