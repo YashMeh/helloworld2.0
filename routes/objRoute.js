@@ -81,11 +81,24 @@ router.post('/profile', function (req, res) {
   })
   setTimeout(function(){
   	req.body["obj"]=detected_ob;
-    console.log(req.body);
+  	request.post({
+  	url:"http://159.89.173.191:3000/user/query",
+  	json:true,
+  	body:{
+  		name:req.body.name,
+  		loc:req.body.loc,
+  		timestamp:req.body.timestamp,
+  		obj:req.body.obj
+  	}
+  },function(err,resp,body){
+  	res.json(body);
+  })
+    
 
   },5000);
   confidence=0;
   detected_ob="";
+
 })
 
 
